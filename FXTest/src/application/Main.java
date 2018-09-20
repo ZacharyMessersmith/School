@@ -4,47 +4,42 @@ import java.awt.List;
 import java.util.Random;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Sphere;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 
 
-/*
-   Button btn = new Button();
-    btn.setText("Open Dialog");
-    btn.setOnAction(
-        new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                final Stage dialog = new Stage();
-                dialog.initModality(Modality.APPLICATION_MODAL);
-                dialog.initOwner(primaryStage);
-                VBox dialogVbox = new VBox(20);
-                dialogVbox.getChildren().add(new Text("This is a Dialog"));
-                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-                dialog.setScene(dialogScene);
-                dialog.show();
-            }
-         }); 
- 
- */
+
 public class Main extends Application{
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		launch(args);
 	}
-
+	Dialog dio;
+	TableView table;
+	
+	
 	@Override
 	public void start(Stage arg0) throws Exception {
 		// TODO Auto-generated method stub
@@ -67,6 +62,9 @@ public class Main extends Application{
 		bp.setCenter(g1);
 		
 		bp.autosize();
+		
+		//=========== Button Stuff ==============================================
+		
 		butt.addEventHandler(MouseEvent.MOUSE_ENTERED, 
 				new EventHandler<MouseEvent>()
 				{
@@ -147,38 +145,51 @@ public class Main extends Application{
 						
 				}
 			});
-		showList.addEventHandler(MouseEvent.MOUSE_PRESSED, 
-				new EventHandler<MouseEvent>()
-				{
-
-					@Override
-					public void handle(MouseEvent arg0) {
-						
-						
-				}
-			});
+		showList.setOnAction(
+		        new EventHandler<ActionEvent>() {
+		            @Override
+		            public void handle(ActionEvent event) {
+		            	if(dio == null)
+		            		dio = new Dialog(arg0);
+		            	else
+		            		dio.toFront();
+		            }
+		         });
+		//=================================================================================
+		
+		createTable();
 		
 		redraw(g1,rand);
+		
 		s.setFill(Color.BLACK);
 	
 		arg0.setScene(s);
 		arg0.show();
 		
 	}
-	
+	//random int: rand.nextInt(primaryScreenBounds.getMaxX()-primaryScreenBounds.getMinX())+primaryScreenBounds.getMinX()
 	void redraw(Group g,Random rand)
 	{
-		for(int i = 0;i<20;i++)
-		{
-			Rectangle r = new Rectangle();
-			r.setY(rand.nextDouble()*(i*30));
-			r.setX(rand.nextDouble()*(i*30)+30);
-			r.setWidth(i*5+20);
-			r.setHeight(i*3 + 50);
-			r.setFill(new Color(rand.nextDouble(),rand.nextDouble(),rand.nextDouble(), 1));
-			g.getChildren().add(r);
-		}
+	
+		Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+		SmartRectangle sr = new SmartRectangle(primaryScreenBounds.getMinX()+(primaryScreenBounds.getMaxX()-primaryScreenBounds.getMinX())* rand.nextDouble(),
+						   primaryScreenBounds.getMinY()+(primaryScreenBounds.getMaxY()-primaryScreenBounds.getMinY())* rand.nextDouble());
+		
+		
+		sr.setFill(new Color(rand.nextDouble(),rand.nextDouble(),rand.nextDouble(), 1));
+		g.getChildren().add(sr);
 	}
 	
-
+	void createTable()
+	{
+		table = new TableView();
+		table.setEditable(false);
+		
+		TableColumn boxID = new TableColumn("Box ID");
+		TableColumn boxXPos = new TableColumn("X Position");
+		TableColumn boxYPos = new TableColumn("Y Position");
+		
+		table.getColumns().addAll(boxID,boxXPos,boxYPos);
+	
+	}
 }
